@@ -1,0 +1,32 @@
+version: "3.8"
+services:
+  bloodstockai:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
+    volumes:
+      - uploads:/app/uploads
+      - results:/app/results
+      - dbdata:/app/data
+    environment:
+      - BAI_DLC_MODEL=superanimal_quadruped
+      - BAI_DLC_BACKBONE=hrnet_w32
+      - BAI_DLC_DETECTOR=fasterrcnn_resnet50_fpn_v2
+      - BAI_DLC_PCUTOFF=0.15
+      - BAI_DLC_VIDEO_ADAPT=false
+      - BAI_CORS_ORIGINS=*
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
+    restart: unless-stopped
+
+volumes:
+  uploads:
+  results:
+  dbdata:
